@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Service Worker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+        }
+        h1 { margin-bottom: 20px; }
+        button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover { transform: scale(1.05); }
+        #status {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            display: none;
+        }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Reset Service Worker</h1>
+        <p>Click the button below to unregister all service workers and clear cache.</p>
+        <p>This will fix any BareMux errors!</p>
+        
+        <button onclick="resetEverything()">Reset Everything</button>
+        <button onclick="window.location.href='/'">Go to Home</button>
+        
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function resetEverything() {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.innerHTML = '<p>🔧 Resetting...</p>';
+
+            try {
+                // 1. Unregister all service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log('Unregistered:', registration);
+                    }
+                    
+                    status.innerHTML += '<p class="success">✅ Unregistered ' + registrations.length + ' service worker(s)</p>';
+                }
+
+                // 2. Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        console.log('Deleted cache:', cacheName);
+                    }
+                    
+                    status.innerHTML += '<p class="success">✅ Cleared ' + cacheNames.length + ' cache(s)</p>';
+                }
+
+                // 3. Clear localStorage
+                localStorage.clear();
+                status.innerHTML += '<p class="success">✅ Cleared localStorage</p>';
+
+                // 4. Clear sessionStorage
+                sessionStorage.clear();
+                status.innerHTML += '<p class="success">✅ Cleared sessionStorage</p>';
+
+                status.innerHTML += '<p class="success" style="font-size: 24px; margin-top: 20px;">🎉 All Reset!</p>';
+                status.innerHTML += '<p>Now click "Go to Home" and reload the page (Ctrl+Shift+R)</p>';
+
+            } catch (error) {
+                status.innerHTML += '<p class="error">❌ Error: ' + error.message + '</p>';
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
