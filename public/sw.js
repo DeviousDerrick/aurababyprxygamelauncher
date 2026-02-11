@@ -1,3 +1,7 @@
+// Service Worker v2.0 - Pure Scramjet (NO BareMux)
+const SW_VERSION = '2.0';
+const CACHE_NAME = 'scramjet-cache-v2';
+
 importScripts('/scram/scramjet.all.js');
 
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
@@ -18,11 +22,25 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing...');
+  console.log('[SW v' + SW_VERSION + '] Installing...');
   self.skipWaiting();
+  
+  // Clear old caches
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('[SW] Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
 
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating...');
+  console.log('[SW v' + SW_VERSION + '] Activating...');
   event.waitUntil(self.clients.claim());
 });
