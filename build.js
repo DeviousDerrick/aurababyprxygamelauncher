@@ -4,7 +4,7 @@ import { copyFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-console.log('🔧 Building for Vercel...');
+console.log('🔧 Building for Vercel (Pure Scramjet)...');
 
 // Helper function to copy directories
 function copyDir(src, dest) {
@@ -26,7 +26,7 @@ function copyDir(src, dest) {
   });
 }
 
-// 1. Copy Scramjet files
+// Copy Scramjet files
 const scramDir = join(__dirname, 'public', 'scram');
 if (!existsSync(scramDir)) {
   mkdirSync(scramDir, { recursive: true });
@@ -43,34 +43,6 @@ if (!existsSync(scramjetPath)) {
 console.log('📦 Copying Scramjet files...');
 copyDir(scramjetPath, scramDir);
 
-// 2. Copy BareMux files
-const baremuxDir = join(__dirname, 'public', 'baremux');
-if (!existsSync(baremuxDir)) {
-  mkdirSync(baremuxDir, { recursive: true });
-}
-
-const baremuxPath = join(__dirname, 'node_modules', '@mercuryworkshop', 'bare-mux', 'dist');
-
-if (existsSync(baremuxPath)) {
-  console.log('📦 Copying BareMux files...');
-  copyDir(baremuxPath, baremuxDir);
-} else {
-  console.warn('⚠️ BareMux not found, skipping...');
-}
-
-// 3. Copy Epoxy files
-const epoxyDir = join(__dirname, 'public', 'epoxy');
-if (!existsSync(epoxyDir)) {
-  mkdirSync(epoxyDir, { recursive: true });
-}
-
-const epoxyPath = join(__dirname, 'node_modules', '@mercuryworkshop', 'epoxy-transport', 'dist');
-
-if (existsSync(epoxyPath)) {
-  console.log('📦 Copying Epoxy files...');
-  copyDir(epoxyPath, epoxyDir);
-} else {
-  console.warn('⚠️ Epoxy not found, skipping...');
-}
-
-console.log('✅ Build complete! Ready for Vercel deployment.');
+console.log('');
+console.log('✅ Build complete!');
+console.log('📦 Pure Scramjet (no BareMux) - Works on Vercel static hosting!');
