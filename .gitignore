@@ -3,8 +3,6 @@ node_modules/
 
 # Build output (created during npm run build)
 public/scram/
-public/baremux/
-public/epoxy/
 
 # Vercel
 .vercel/
