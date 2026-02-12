@@ -1,11 +1,9 @@
 # Dependencies
 node_modules/
 
-# Build output (created during npm run build)
-public/scram/
-
-# Vercel
-.vercel/
+# Logs
+*.log
+npm-debug.log*
 
 # OS files
 .DS_Store
@@ -15,10 +13,9 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Logs
-*.log
-npm-debug.log*
-
 # Environment
 .env
 .env.local
+
+# Railway
+.railway/
