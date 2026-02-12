@@ -3,7 +3,8 @@
 // Game URL mappings
 const GAME_URLS = {
     'yorg3': 'https://yorg3.io/',
-    'stickman': 'https://poki.com/en/g/stickman-climb-3d'
+    'stickman': 'https://poki.com/en/g/stickman-climb-3d',
+    'vacation': 'https://virtualvacation.us/guess'
 };
 
 // Global Scramjet instance
@@ -13,7 +14,7 @@ let isReady = false;
 // Initialize Scramjet
 async function initScramjet() {
     try {
-        console.log('🔧 Initializing Scramjet...');
+        console.log('🔧 Initializing Scramjet + BareMux...');
         
         const { ScramjetController } = $scramjetLoadController();
         scramjet = new ScramjetController({
