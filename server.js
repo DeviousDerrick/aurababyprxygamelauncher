@@ -4,6 +4,10 @@ import { hostname } from "node:os";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import { scramjetPath } from "@mercuryworkshop/scramjet/path";
+import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
+import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
+import { createBareServer } from "@tomphttp/bare-server-node";
+import wisp from "wisp-server-node";
 
 const publicPath = fileURLToPath(new URL("./public/", import.meta.url));
 
@@ -11,10 +15,14 @@ const fastify = Fastify({
   serverFactory: (handler) => {
     return createServer()
       .on("request", (req, res) => {
-        // Enable iframe embedding and CORS
         res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
         res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
         handler(req, res);
+      })
+      .on("upgrade", (req, socket, head) => {
+        if (req.url.endsWith("/wisp/")) {
+          wisp.routeRequest(req, socket, head);
+        }
       });
   },
 });
@@ -32,6 +40,20 @@ fastify.register(fastifyStatic, {
   decorateReply: false,
 });
 
+// Serve BareMux
+fastify.register(fastifyStatic, {
+  root: baremuxPath,
+  prefix: "/baremux/",
+  decorateReply: false,
+});
+
+// Serve Epoxy
+fastify.register(fastifyStatic, {
+  root: epoxyPath,
+  prefix: "/epoxy/",
+  decorateReply: false,
+});
+
 // 404 fallback
 fastify.setNotFoundHandler((req, reply) => {
   return reply.code(404).type('text/html').sendFile('404.html');
@@ -39,12 +61,10 @@ fastify.setNotFoundHandler((req, reply) => {
 
 fastify.server.on("listening", () => {
   const address = fastify.server.address();
-  console.log("🎮 Game Launcher (Scramjet) is running!");
-  console.log(`   http://localhost:${address.port}`);
-  console.log(`   http://${hostname()}:${address.port}`);
-  console.log(
-    `   http://${address.family === "IPv6" ? `[${address.address}]` : address.address}:${address.port}`
-  );
+  console.log("🎮 Game Launcher is LIVE!");
+  console.log("   With: Scramjet + BareMux + WISP + Epoxy");
+  console.log(`   Local: http://localhost:${address.port}`);
+  console.log(`   Network: http://${hostname()}:${address.port}`);
 });
 
 process.on("SIGINT", shutdown);
