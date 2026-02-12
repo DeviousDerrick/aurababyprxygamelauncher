@@ -3,7 +3,6 @@ async function registerSW() {
     throw new Error("Service workers are not supported in this browser");
   }
 
-  // Check if we're on HTTPS or localhost
   const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
   const isHttps = location.protocol === "https:";
 
