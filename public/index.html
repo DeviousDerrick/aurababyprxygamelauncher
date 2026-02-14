@@ -21,18 +21,13 @@
             padding: 20px;
         }
 
-        #launcher {
+        .container {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 700px;
             width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        #launcher.hidden {
-            display: none;
         }
 
         h1 {
@@ -74,6 +69,9 @@
             font-size: 1em;
             font-weight: 600;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            display: block;
+            text-align: center;
         }
 
         .game-card:hover {
@@ -90,106 +88,25 @@
             margin-bottom: 10px;
         }
 
-        .custom-url {
+        .feature-box {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
             margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #eee;
         }
 
-        .custom-url h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.2em;
+        .feature-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
         }
 
-        .input-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .launch-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .launch-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 600;
-            display: none;
-        }
-
-        .status.loading {
-            background: #fff3cd;
-            color: #856404;
-            display: block;
-        }
-
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            display: block;
-        }
-
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            display: block;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 2px solid #856404;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        #sj-frame {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-            z-index: 9999;
+        .feature-text {
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.6;
         }
 
         @media (max-width: 600px) {
@@ -200,53 +117,36 @@
             .game-grid {
                 grid-template-columns: 1fr;
             }
-
-            .input-group {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
 <body>
-    <div id="launcher">
+    <div class="container">
         <h1>🎮 Game Launcher</h1>
-        <p class="subtitle">Play Web Games Through Proxy</p>
+        <p class="subtitle">Choose Your Game</p>
         <p class="powered-by">Powered by Scramjet + BareMux + WISP</p>
 
         <div class="game-grid">
-            <button class="game-card" onclick="launchGame('yorg3')">
+            <a href="/yorg.html" class="game-card">
                 <div class="game-icon">🧟</div>
                 <div>YORG3.io</div>
-            </button>
-            <button class="game-card" onclick="launchGame('stickman')">
+            </a>
+            <a href="/stickman.html" class="game-card">
                 <div class="game-icon">🧗</div>
                 <div>Stickman Climb 3D</div>
-            </button>
-            <button class="game-card" onclick="launchGame('vacation')">
+            </a>
+            <a href="/vacation.html" class="game-card">
                 <div class="game-icon">🌍</div>
                 <div>Virtual Vacation</div>
-            </button>
+            </a>
         </div>
 
-        <div class="custom-url">
-            <h3>Or enter any game URL:</h3>
-            <div class="input-group">
-                <input 
-                    type="text" 
-                    id="custom-url" 
-                    placeholder="https://example.com/game"
-                >
-                <button class="launch-btn" onclick="launchCustomUrl()">Launch</button>
+        <div class="feature-box">
+            <div class="feature-title">💾 Progress Automatically Saved!</div>
+            <div class="feature-text">
+                All games now save your progress automatically. Your scores, levels, and achievements will be remembered when you return. Just click a game to start playing!
             </div>
         </div>
-
-        <div id="statusMsg" class="status"></div>
     </div>
-
-    <iframe id="sj-frame"></iframe>
-
-    <script src="/scram/scramjet.all.js"></script>
-    <script src="register-sw.js" defer></script>
-    <script type="module" src="index.js"></script>
 </body>
 </html>
