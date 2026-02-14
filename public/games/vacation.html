@@ -185,6 +185,123 @@
 
     <script src="/scram/scramjet.all.js"></script>
     <script src="/register-sw.js"></script>
-    <script type="module" src="/game-launcher.js" data-game="vacation" data-url="https://virtualvacation.us/guess"></script>
+    <script>
+        // Game configuration
+        const GAME_URL = 'https://virtualvacation.us/guess';
+        
+        let scramjet = null;
+        let connection = null;
+        let isReady = false;
+
+        // Initialize Scramjet + BareMux
+        async function initScramjet() {
+            try {
+                console.log('🔧 Initializing Scramjet + BareMux...');
+                
+                const { ScramjetController } = $scramjetLoadController();
+                scramjet = new ScramjetController({
+                    files: {
+                        wasm: '/scram/scramjet.wasm.wasm',
+                        all: '/scram/scramjet.all.js',
+                        sync: '/scram/scramjet.sync.js',
+                    },
+                });
+
+                await scramjet.init();
+                console.log('✅ Scramjet initialized');
+                
+                try {
+                    const BareMuxModule = await import('/baremux/index.mjs');
+                    
+                    if (BareMuxModule && BareMuxModule.BareMuxConnection) {
+                        connection = new BareMuxModule.BareMuxConnection("/baremux/worker.js");
+                        console.log('✅ BareMux connection created');
+                        
+                        const wispUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/wisp/";
+                        console.log('📡 WISP URL:', wispUrl);
+                        
+                        await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+                        console.log('✅ BareMux transport configured');
+                    }
+                } catch (err) {
+                    console.warn('⚠️ BareMux initialization failed:', err);
+                }
+                
+                isReady = true;
+                console.log('✅ Ready to launch game!');
+
+            } catch (error) {
+                console.error('❌ Initialization error:', error);
+                showStatus('Failed to initialize: ' + error.message, 'error');
+            }
+        }
+
+        initScramjet();
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMsg');
+            if (!statusEl) return;
+            
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+            
+            if (type === 'loading') {
+                statusEl.innerHTML = `<span class="spinner"></span>${message}`;
+            } else {
+                statusEl.textContent = message;
+            }
+
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        async function launchGame() {
+            try {
+                if (!isReady || !scramjet) {
+                    showStatus('Still initializing... wait a moment', 'error');
+                    return;
+                }
+
+                showStatus('Registering service worker...', 'loading');
+
+                try {
+                    await registerSW();
+                    console.log('✅ Service worker registered');
+                } catch (err) {
+                    showStatus('Service worker failed!', 'error');
+                    console.error(err);
+                    return;
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                showStatus('Launching game...', 'loading');
+
+                const encodedUrl = scramjet.encodeUrl(GAME_URL);
+
+                console.log('🎮 Loading game:', GAME_URL);
+                console.log('🔗 Encoded URL:', encodedUrl);
+                console.log('💾 Progress saving enabled (consistent URL)');
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                const frame = document.getElementById('game-frame');
+                const launcher = document.getElementById('launcher');
+                
+                frame.src = encodedUrl;
+                frame.style.display = 'block';
+                launcher.classList.add('hidden');
+
+                console.log('✅ Game launched!');
+
+            } catch (error) {
+                console.error('❌ Launch error:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
 </body>
 </html>
