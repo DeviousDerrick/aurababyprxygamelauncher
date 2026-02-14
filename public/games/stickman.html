@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🧗 Stickman Climb 3D - Game Launcher</title>
     <style>
-        * {s
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -177,8 +177,6 @@
         <button class="launch-btn" onclick="launchGame()">▶ Play Stickman Climb</button>
         
         <div id="statusMsg" class="status"></div>
-
-        <a href="/" class="back-btn">← Back to Games</a>
     </div>
 
     <iframe id="game-frame"></iframe>
@@ -187,7 +185,7 @@
     <script src="/register-sw.js"></script>
     <script>
         // Game configuration
-        const GAME_URL = 'https://h5.meegames.com/games/5226715987/stickman-climb-3dd/index.html';
+        const GAME_URL = 'https://poki.com/en/g/stickman-climb-3d';
         
         let scramjet = null;
         let connection = null;
