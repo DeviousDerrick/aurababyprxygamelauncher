@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🟦 Roblox - Game Launcher</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -20,7 +15,6 @@
             justify-content: center;
             padding: 20px;
         }
-
         #launcher {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -29,31 +23,10 @@
             max-width: 600px;
             width: 100%;
             text-align: center;
-            transition: all 0.3s ease;
         }
-
-        #launcher.hidden {
-            display: none;
-        }
-
-        .game-icon {
-            font-size: 8em;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 3em;
-        }
-
-        .description {
-            color: #666;
-            margin-bottom: 40px;
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-
+        .game-icon { font-size: 8em; margin-bottom: 20px; }
+        h1 { color: #333; margin-bottom: 20px; font-size: 3em; }
+        .description { color: #666; margin-bottom: 40px; font-size: 1.1em; line-height: 1.6; }
         .launch-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -65,34 +38,12 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
         }
-
-        .launch-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .status {
-            margin-top: 30px;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: 600;
-            display: none;
-        }
-
-        .status.loading {
-            background: #fff3cd;
-            color: #856404;
-            display: block;
-        }
-
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            display: block;
-        }
-
+        .launch-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); }
+        .status { margin-top: 30px; padding: 15px; border-radius: 10px; font-weight: 600; display: none; }
+        .status.loading { background: #fff3cd; color: #856404; display: block; }
+        .status.success { background: #d4edda; color: #155724; display: block; }
+        .status.error { background: #f8d7da; color: #721c24; display: block; }
         .spinner {
             display: inline-block;
             width: 14px;
@@ -103,43 +54,17 @@
             animation: spin 0.6s linear infinite;
             margin-right: 10px;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        #game-frame {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-            z-index: 9999;
-        }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
         .info {
             background: rgba(102, 126, 234, 0.1);
             border-left: 4px solid #667eea;
             padding: 15px;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: left;
         }
-
-        .info-title {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-
-        .info-text {
-            color: #555;
-            font-size: 0.95em;
-        }
-
+        .info-title { font-weight: bold; color: #667eea; margin-bottom: 8px; }
+        .info-text { color: #555; font-size: 0.95em; }
         .warning {
             background: rgba(255, 193, 7, 0.1);
             border-left: 4px solid #ffc107;
@@ -148,17 +73,8 @@
             margin-bottom: 20px;
             text-align: left;
         }
-
-        .warning-title {
-            font-weight: bold;
-            color: #ffc107;
-            margin-bottom: 8px;
-        }
-
-        .warning-text {
-            color: #555;
-            font-size: 0.95em;
-        }
+        .warning-title { font-weight: bold; color: #ffc107; margin-bottom: 8px; }
+        .warning-text { color: #555; font-size: 0.95em; }
     </style>
 </head>
 <body>
@@ -170,8 +86,8 @@
         </p>
 
         <div class="warning">
-            <div class="warning-title">⚠️ Note: Cloud Gaming</div>
-            <div class="warning-text">This runs Roblox through cloud gaming. May take 30-60 seconds to load.</div>
+            <div class="warning-title">🚀 Opens in New Tab!</div>
+            <div class="warning-text">Roblox will automatically open in a new tab with hidden URL. Cloud gaming may take 30-60 seconds to load.</div>
         </div>
 
         <div class="info">
@@ -184,15 +100,14 @@
         <div id="statusMsg" class="status"></div>
     </div>
 
-    <iframe id="game-frame"></iframe>
-
+    <script src="/baremux/index.js"></script>
+    <script src="/epoxy/index.js"></script>
     <script src="/scram/scramjet.all.js"></script>
     <script src="/register-sw.js"></script>
     <script>
         const GAME_URL = 'https://nowgg.lol/apps/a/19900/b.html';
         
         let scramjet = null;
-        let connection = null;
         let isReady = false;
 
         async function initScramjet() {
@@ -212,24 +127,21 @@
                 console.log('✅ Scramjet initialized');
                 
                 try {
-                    const BareMuxModule = await import('/baremux/index.mjs');
+                    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+                    const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+                    console.log('📡 WISP URL:', wispUrl);
                     
-                    if (BareMuxModule && BareMuxModule.BareMuxConnection) {
-                        connection = new BareMuxModule.BareMuxConnection("/baremux/worker.js");
-                        console.log('✅ BareMux connection created');
-                        
-                        const wispUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/wisp/";
-                        console.log('📡 WISP URL:', wispUrl);
-                        
+                    const current = await connection.getTransport();
+                    if (current !== "/epoxy/index.mjs") {
                         await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
-                        console.log('✅ BareMux transport configured');
                     }
+                    console.log('✅ BareMux transport configured');
                 } catch (err) {
-                    console.warn('⚠️ BareMux initialization failed:', err);
+                    console.warn('⚠️ BareMux setup failed:', err);
                 }
                 
                 isReady = true;
-                console.log('✅ Ready to launch game!');
+                console.log('✅ Ready to launch Roblox!');
 
             } catch (error) {
                 console.error('❌ Initialization error:', error);
@@ -260,45 +172,50 @@
         }
 
         async function launchGame() {
+            // AUTO-OPEN in about:blank tab!
+            const win = window.open("about:blank", "_blank");
+            if (!win) {
+                alert("❌ Please allow popups to play Roblox!\n\nClick the popup blocker icon in your address bar and allow popups for this site.");
+                return;
+            }
+            
+            showStatus('Opening Roblox in new tab...', 'loading');
+            
             try {
                 if (!isReady || !scramjet) {
+                    win.close();
                     showStatus('Still initializing... wait a moment', 'error');
                     return;
                 }
 
-                showStatus('Registering service worker...', 'loading');
+                await registerSW();
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
-                try {
-                    await registerSW();
-                    console.log('✅ Service worker registered');
-                } catch (err) {
-                    showStatus('Service worker failed!', 'error');
-                    console.error(err);
-                    return;
-                }
+                const encodedUrl = GAME_URL.startsWith("/scramjet/") 
+                    ? GAME_URL 
+                    : "/scramjet/" + GAME_URL;
 
-                await new Promise(resolve => setTimeout(resolve, 1500));
-
-                showStatus('Launching Roblox (this may take 30-60 seconds)...', 'loading');
-
-                const encodedUrl = scramjet.encodeUrl(GAME_URL);
-
-                console.log('🎮 Loading game:', GAME_URL);
-                console.log('🔗 Encoded URL:', encodedUrl);
-                console.log('💾 Progress saving enabled (consistent URL)');
-
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                const frame = document.getElementById('game-frame');
-                const launcher = document.getElementById('launcher');
+                // Setup the about:blank tab
+                const doc = win.document;
+                doc.title = "Classes"; // Disguise the title
+                doc.body.style.margin = "0";
+                doc.body.style.overflow = "hidden";
+                doc.body.style.background = "#000";
                 
-                frame.src = encodedUrl;
-                frame.style.display = 'block';
-                launcher.classList.add('hidden');
-
-                console.log('✅ Game launched! Please wait for cloud gaming to load...');
+                const iframe = doc.createElement("iframe");
+                iframe.style.width = "100%";
+                iframe.style.height = "100vh";
+                iframe.style.border = "none";
+                iframe.src = encodedUrl;
+                
+                doc.body.appendChild(iframe);
+                
+                console.log('✅ Roblox launched in about:blank!');
+                console.log('🔗 URL hidden from address bar');
+                showStatus('✅ Roblox opened in new tab! (Wait 30-60 sec)', 'success');
 
             } catch (error) {
+                win.close();
                 console.error('❌ Launch error:', error);
                 showStatus(`Error: ${error.message}`, 'error');
             }
