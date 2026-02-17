@@ -6,7 +6,6 @@ import fastifyStatic from "@fastify/static";
 import { scramjetPath } from "@mercuryworkshop/scramjet/path";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
-import { createBareServer } from "@tomphttp/bare-server-node";
 import wisp from "wisp-server-node";
 
 const publicPath = fileURLToPath(new URL("./public/", import.meta.url));
@@ -15,13 +14,23 @@ const fastify = Fastify({
   serverFactory: (handler) => {
     return createServer()
       .on("request", (req, res) => {
-        res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-        res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+        // Only apply COOP/COEP to proxy resources
+        if (
+          req.url.startsWith("/scram/") ||
+          req.url.startsWith("/baremux/") ||
+          req.url.startsWith("/epoxy/") ||
+          req.url.startsWith("/wisp/")
+        ) {
+          res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+          res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+        }
         handler(req, res);
       })
       .on("upgrade", (req, socket, head) => {
         if (req.url.endsWith("/wisp/")) {
           wisp.routeRequest(req, socket, head);
+        } else {
+          socket.end();
         }
       });
   },
