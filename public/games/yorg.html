@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🧟 YORG3.io - Game Launcher</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -20,7 +15,6 @@
             justify-content: center;
             padding: 20px;
         }
-
         #launcher {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -31,29 +25,10 @@
             text-align: center;
             transition: all 0.3s ease;
         }
-
-        #launcher.hidden {
-            display: none;
-        }
-
-        .game-icon {
-            font-size: 8em;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 3em;
-        }
-
-        .description {
-            color: #666;
-            margin-bottom: 40px;
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-
+        #launcher.hidden { display: none; }
+        .game-icon { font-size: 8em; margin-bottom: 20px; }
+        h1 { color: #333; margin-bottom: 20px; font-size: 3em; }
+        .description { color: #666; margin-bottom: 40px; font-size: 1.1em; line-height: 1.6; }
         .launch-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -67,52 +42,10 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
         }
-
-        .launch-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .back-btn {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-        }
-
-        .back-btn:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        .status {
-            margin-top: 30px;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: 600;
-            display: none;
-        }
-
-        .status.loading {
-            background: #fff3cd;
-            color: #856404;
-            display: block;
-        }
-
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            display: block;
-        }
-
+        .launch-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); }
+        .status { margin-top: 30px; padding: 15px; border-radius: 10px; font-weight: 600; display: none; }
+        .status.loading { background: #fff3cd; color: #856404; display: block; }
+        .status.error { background: #f8d7da; color: #721c24; display: block; }
         .spinner {
             display: inline-block;
             width: 14px;
@@ -123,11 +56,7 @@
             animation: spin 0.6s linear infinite;
             margin-right: 10px;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
         #game-frame {
             display: none;
             position: fixed;
@@ -139,7 +68,6 @@
             background: white;
             z-index: 9999;
         }
-
         .info {
             background: rgba(102, 126, 234, 0.1);
             border-left: 4px solid #667eea;
@@ -148,17 +76,8 @@
             margin-bottom: 30px;
             text-align: left;
         }
-
-        .info-title {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-
-        .info-text {
-            color: #555;
-            font-size: 0.95em;
-        }
+        .info-title { font-weight: bold; color: #667eea; margin-bottom: 8px; }
+        .info-text { color: #555; font-size: 0.95em; }
     </style>
 </head>
 <body>
@@ -181,17 +100,16 @@
 
     <iframe id="game-frame"></iframe>
 
+    <script src="/baremux/index.js"></script>
+    <script src="/epoxy/index.js"></script>
     <script src="/scram/scramjet.all.js"></script>
     <script src="/register-sw.js"></script>
     <script>
-        // Game configuration
         const GAME_URL = 'https://yorg3.io/';
         
         let scramjet = null;
-        let connection = null;
         let isReady = false;
 
-        // Initialize Scramjet + BareMux
         async function initScramjet() {
             try {
                 console.log('🔧 Initializing Scramjet + BareMux...');
@@ -209,20 +127,17 @@
                 console.log('✅ Scramjet initialized');
                 
                 try {
-                    const BareMuxModule = await import('/baremux/index.mjs');
+                    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+                    const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+                    console.log('📡 WISP URL:', wispUrl);
                     
-                    if (BareMuxModule && BareMuxModule.BareMuxConnection) {
-                        connection = new BareMuxModule.BareMuxConnection("/baremux/worker.js");
-                        console.log('✅ BareMux connection created');
-                        
-                        const wispUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/wisp/";
-                        console.log('📡 WISP URL:', wispUrl);
-                        
+                    const current = await connection.getTransport();
+                    if (current !== "/epoxy/index.mjs") {
                         await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
-                        console.log('✅ BareMux transport configured');
                     }
+                    console.log('✅ BareMux transport configured');
                 } catch (err) {
-                    console.warn('⚠️ BareMux initialization failed:', err);
+                    console.warn('⚠️ BareMux setup failed:', err);
                 }
                 
                 isReady = true;
@@ -278,11 +193,12 @@
 
                 showStatus('Launching game...', 'loading');
 
-                const encodedUrl = scramjet.encodeUrl(GAME_URL);
+                const encodedUrl = GAME_URL.startsWith("/scramjet/") 
+                    ? GAME_URL 
+                    : "/scramjet/" + GAME_URL;
 
                 console.log('🎮 Loading game:', GAME_URL);
                 console.log('🔗 Encoded URL:', encodedUrl);
-                console.log('💾 Progress saving enabled (consistent URL)');
 
                 await new Promise(resolve => setTimeout(resolve, 500));
 
